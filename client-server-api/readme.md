@@ -9,5 +9,8 @@ go env -w CGO_ENABLED=1
 
 Rodando:
 go mod tidy
+
+
 go run cmd/server/server.go
+
 go run cmd/client/client.go
