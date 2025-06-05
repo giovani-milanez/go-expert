@@ -1,0 +1,13 @@
+FROM golang:latest as builder
+WORKDIR /app
+COPY . .
+RUN GOOS=linux CGO_ENABLED=0 go build -ldflags="-w -s" ./cmd/ordersystem
+
+FROM scratch
+COPY --from=builder /app/ordersystem .
+COPY --from=builder /app/cmd/ordersystem/.env .
+COPY --from=builder /app/internal/infra/database/migrations ./migrations
+
+ENV DB_HOST="mysql"
+ENV RABBITMQ_HOST="rabbitmq"
+CMD ["./ordersystem"]

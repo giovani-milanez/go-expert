@@ -2,12 +2,6 @@
 
 docker-compose up -d
 
-cd cmd/ordersystem
-
-go run .
-
-  
-
 ## Como Testar
 
 Web - Porta 8000:

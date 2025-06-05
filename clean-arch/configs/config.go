@@ -25,8 +25,8 @@ func LoadConfig(path string) (*Conf, error) {
 	viper.SetConfigType("env")
 	viper.AddConfigPath(path)
 	viper.SetConfigFile(".env")
-	viper.AutomaticEnv()
 	err := viper.ReadInConfig()
+	viper.AutomaticEnv()
 	if err != nil {
 		panic(err)
 	}

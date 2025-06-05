@@ -1,15 +1,21 @@
 version: '3'
 
 services:
-  migrate:
+  ordersystem:
     build:
       context: .
-      dockerfile: MigrateDockerfile
+      dockerfile: Dockerfile.prod
     depends_on:
       - mysql
+      - rabbitmq
+    ports:
+      - 8000:8000
+      - 50051:50051
+      - 8080:8080
+    volumes:
+      - .:/app
     networks:
       - app-network
-
   mysql:
     image: mysql:5.7
     container_name: mysql
@@ -35,6 +41,8 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      - app-network
 
 networks:
   app-network:
