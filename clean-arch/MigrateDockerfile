@@ -1,0 +1,35 @@
+# Use a minimal base image with required tools
+FROM ubuntu:20.04
+
+# Non-interactive mode for apt-get
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install required dependencies
+RUN apt-get update && apt-get install -y \
+  curl \
+  gnupg \
+  lsb-release \
+  apt-transport-https \
+  ca-certificates \
+  default-mysql-client \
+  && rm -rf /var/lib/apt/lists/*
+
+# Add golang-migrate GPG key and repository
+RUN curl -L https://packagecloud.io/golang-migrate/migrate/gpgkey | apt-key add - && \
+  echo "deb https://packagecloud.io/golang-migrate/migrate/ubuntu/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/migrate.list
+
+# Install migrate
+RUN apt-get update && apt-get install -y migrate
+
+# Set working directory
+WORKDIR /app
+
+# Copy migration files
+COPY internal/infra/database/migrations ./migrations
+
+# Copy wait-for-db script
+COPY wait-for-db.sh /wait-for-db.sh
+RUN chmod +x /wait-for-db.sh
+
+# Run migrate command on container start
+CMD ["/wait-for-db.sh", "mysql", "migrate", "-path=migrations", "-database", "mysql://root:root@tcp(mysql:3306)/orders", "-verbose", "up"]
