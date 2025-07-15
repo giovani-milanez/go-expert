@@ -1,0 +1,50 @@
+version: '2.4'
+
+services:
+  service-a:
+    build:
+      context: .
+      dockerfile: service-a/Dockerfile
+    depends_on:
+      - service-b
+      - otel-collector
+      - zipkin
+    ports:
+      - 8081:8081
+    volumes:
+      - .:/app
+  service-b:
+    build:
+      context: .
+      dockerfile: service-b/Dockerfile
+    depends_on:
+      - otel-collector
+      - zipkin
+    ports:
+      - 8080:8080
+    volumes:
+      - .:/app
+  zipkin:
+    image: ghcr.io/openzipkin/zipkin-slim:${TAG:-latest}
+    container_name: zipkin
+    # Environment settings are defined here https://github.com/openzipkin/zipkin/blob/master/zipkin-server/README.md#environment-variables
+    environment:
+      - STORAGE_TYPE=mem
+    ports:
+      # Port used for the Zipkin UI and HTTP Api
+      - 9411:9411
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib
+    volumes:
+      - ./.docker/otel-collector-config.yaml:/etc/otelcol-contrib/config.yaml
+    ports:
+      - 1888:1888 # pprof extension
+      - 8888:8888 # Prometheus metrics exposed by the Collector
+      - 8889:8889 # Prometheus exporter metrics
+      - 13133:13133 # health_check extension
+      - 4317:4317 # OTLP gRPC receiver
+      - 4318:4318 # OTLP http receiver
+      - 55679:55679 # zpages extension
+
+
+

@@ -1,0 +1,35 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+processors:
+  batch:
+
+exporters:
+  debug:
+  otlp:
+    endpoint: otel-collector:4317
+    tls:    
+      insecure: true
+  zipkin:
+    endpoint: "http://zipkin:9411/api/v2/spans"
+
+extensions:
+  health_check:
+  pprof:
+  zpages:
+
+service:
+  extensions: [health_check, pprof, zpages]
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [debug,zipkin]
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlp]
