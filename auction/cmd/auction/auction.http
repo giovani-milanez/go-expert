@@ -1,0 +1,42 @@
+### List of all auctions Status = Active
+GET http://localhost:8080/auction?status=0 HTTP/1.1
+Host: localhost:8080
+
+### Create new auction, condition New
+POST http://localhost:8080/auction HTTP/1.1
+Host: localhost:8080
+Content-Type: application/json
+
+{
+    "product_name":"Notebook Asus",
+    "category": "Eletronics",
+    "description":"gamer notebook",
+    "condition": 0
+}
+
+### Get Auction by Id
+GET http://localhost:8080/auction/21560ed1-08d7-487e-802b-452de4c9be83 HTTP/1.1
+Host: localhost:8080
+
+### Get Winner Bid
+GET http://localhost:8080/auction/winner/21560ed1-08d7-487e-802b-452de4c9be83 HTTP/1.1
+Host: localhost:8080
+
+### Create Bid
+POST http://localhost:8080/bid HTTP/1.1
+Host: localhost:8080
+Content-Type: application/json
+
+{
+  "user_id": "82799ecb-3552-41f6-a095-f1504bee4da1",
+  "auction_id": "21560ed1-08d7-487e-802b-452de4c9be83",
+  "amount": 1002
+}
+
+### Find Bids by Auction
+GET http://localhost:8080/bid/21560ed1-08d7-487e-802b-452de4c9be83 HTTP/1.1
+Host: localhost:8080
+
+### Find user by id
+GET http://localhost:8080/user/82799ecb-3552-41f6-a095-f1504bee4da1 HTTP/1.1
+Host: localhost:8080
