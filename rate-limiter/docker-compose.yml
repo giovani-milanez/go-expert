@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/app
+    networks:
+      - localNetwork
+
+  redis:
+    image: redis:latest # Use the official Redis Docker image
+    ports:
+      - "6379:6379" # Map host port 6379 to container port 6379
+    volumes:
+      - redis_data:/data # Persist Redis data using a named volume
+    networks:
+      - localNetwork
+
+volumes:
+  redis_data:
+    driver: local
+
+networks:
+  localNetwork:
+    driver: bridge
